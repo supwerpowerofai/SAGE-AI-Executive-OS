@@ -1,94 +1,115 @@
 # SAGE AI Executive OS
 
-**A practical, human-in-the-loop operating system for turning goals, projects, and decisions into accountable execution.**
+**A local-first, human-in-the-loop execution system for turning projects into clear next actions.**
 
-SAGE is an evolving personal and business operations platform. Its purpose is to bring priorities, projects, tasks, reviews, and decision-making into one clear workflow—without pretending that an AI assistant can act autonomously or safely without permission.
+SAGE v0.1 provides a Python command-line interface backed by SQLite. It can create and list projects, create and list tasks, update project/task statuses, and summarize execution counts. It is an early working foundation—not yet a hosted dashboard or autonomous AI agent.
 
-> **Project status:** Initial repository and product definition. Features described as planned are not yet implemented. This README will be updated as working features are built and verified.
+## Current capabilities
 
-## Product vision
+- Create projects with a name and optional description.
+- Track project status: active, paused, completed.
+- Add tasks with priority 1 (highest) through 5 (lowest).
+- Track task status: todo, in_progress, done.
+- List tasks ordered by status and priority.
+- View dashboard counts for active projects and task states.
+- Persist data in a local SQLite database.
 
-SAGE is designed around one operating principle:
+## Requirements
 
-**Turn important goals into clear priorities, small executable actions, and measurable progress.**
+- Python 3.10 or newer
+- pip
 
-The system is intended to support:
+The application runtime uses only the Python standard library. Pytest and a Python 3.10 TOML compatibility dependency are used for tests.
 
-- **Executive dashboard** — a concise view of current priorities, active projects, and progress.
-- **Project operations** — track projects, owners, status, next actions, blockers, and evidence.
-- **Daily execution** — convert plans into realistic tasks and make the next action obvious.
-- **Review system** — daily, weekly, and monthly reviews that compare plans with actual outcomes.
-- **Decision journal** — record decisions, assumptions, risks, and reasons so they can be revisited.
-- **AI assistance** — help summarize context, draft plans, and suggest next actions, with human approval before consequential actions.
+## Install locally
 
-## Design principles
+Clone the repository, then from its root directory run:
 
-1. **Evidence before claims** — distinguish verified facts, assumptions, and unknowns.
-2. **Human approval** — never imply that an external action was completed without confirmation.
-3. **One clear next action** — reduce overload instead of generating endless task lists.
-4. **Traceable progress** — connect outcomes to tasks, decisions, and supporting evidence.
-5. **Privacy by design** — minimize collected data and document storage and processing choices.
-6. **Honest capability boundaries** — label prototypes, planned features, and tested functionality accurately.
-
-## Initial build roadmap
-
-| Phase | Deliverable | Status |
-|---|---|---|
-| 0 | Product definition and repository foundation | In progress |
-| 1 | Local-first project and task dashboard | Planned |
-| 2 | Daily execution and review workflows | Planned |
-| 3 | Decision journal and evidence tracking | Planned |
-| 4 | Optional AI planning assistant | Planned |
-| 5 | Integrations, permissions, and automation safeguards | Planned |
-
-## Proposed initial architecture
-
-The first milestone will be a small, understandable application with a local data store and a clear separation between:
-
-- **Interface:** dashboard, project views, task views, and review screens.
-- **Application logic:** prioritization, task status transitions, and review calculations.
-- **Data layer:** projects, tasks, decisions, and review records.
-- **AI adapter (later phase):** optional model integration behind an explicit interface.
-
-The implementation stack will be selected before the first functional milestone and documented here. No cloud service, AI provider, or integration is assumed to be connected.
-
-## Safety and trust
-
-SAGE is an execution-support tool, not a financial, legal, medical, or other professional decision-maker. Recommendations should show their assumptions and uncertainty. External actions—such as sending messages, changing records, or making purchases—must require explicit authorization and a verifiable result.
-
-## Development approach
-
-Each milestone should include:
-
-- Working source code
-- Setup and run instructions
-- Tests for core behavior
-- Screenshots or a short demo when the interface exists
-- Known limitations and next steps
-
-A feature is considered implemented only when its code exists and the documented verification has been performed.
-
-## Repository structure
-
-The structure will grow as the application is implemented. The initial planned layout is:
-
-```text
-SAGE-AI-Executive-OS/
-├── README.md
-├── docs/
-│   ├── PRODUCT_SPEC.md
-│   └── ROADMAP.md
-├── src/
-│   ├── app/
-│   ├── components/
-│   └── core/
-└── tests/
+```bash
+python -m venv .venv
 ```
 
-## Contributing
+Activate the environment:
 
-This is currently a personal portfolio project. Issues and constructive feedback are welcome. Before contributing code, please open an issue describing the proposed change.
+- Windows PowerShell: `.venv\\Scripts\\Activate.ps1`
+- macOS/Linux: `source .venv/bin/activate`
+
+Install the package and test tools:
+
+```bash
+python -m pip install -e .
+python -m pip install pytest
+```
+
+Run the test suite:
+
+```bash
+python -m pytest -q
+```
+
+## Quick start
+
+Create a project:
+
+```bash
+sage add-project "Launch website" --description "First business milestone"
+```
+
+Add a task (use the project ID printed by the previous command):
+
+```bash
+sage add-task 1 "Write homepage copy" --priority 1
+```
+
+List projects and tasks:
+
+```bash
+sage projects
+sage tasks
+```
+
+Update a task and view the dashboard:
+
+```bash
+sage set-task-status 1 in_progress
+sage dashboard
+```
+
+Use `--db path/to/file.db` before any command to choose a database file. By default, SAGE creates `sage.db` in the current working directory.
+
+You can also launch the CLI with `python -m sage` after installing the package.
+
+## GitHub Actions
+
+The SAGE CI workflow runs the automated test suite on pushes, pull requests, and manual dispatch. It checks Python 3.10, 3.11, and 3.12. A configured workflow is not proof of a passing run; check the repository's Actions tab for the latest result.
+
+## Architecture
+
+- `src/sage/core.py`: SQLite schema and project/task operations.
+- `src/sage/cli.py`: command-line interface.
+- `src/sage/__main__.py`: `python -m sage` entry point.
+- `tests/`: configuration, core behavior and CLI workflow tests.
+
+## Current limitations
+
+- Local single-user database; no cloud sync or hosted accounts.
+- No graphical dashboard yet.
+- No AI model or external messaging integration.
+- No recurring tasks, calendar sync, or multi-user permissions.
+- Due dates are stored as supplied; advanced date validation and reminders are not implemented.
+
+## Product principles
+
+1. Evidence before claims.
+2. One clear next action over overwhelming task lists.
+3. Human approval before consequential external actions.
+4. Privacy-conscious local-first storage.
+5. Features are marked complete only after implementation and verification.
+
+## Roadmap
+
+See [docs/ROADMAP.md](docs/ROADMAP.md) and [the 21-project portfolio plan](docs/PORTFOLIO_21_PROJECTS.md).
 
 ## License
 
-No license has been selected yet. Until a license is added, the source is not granted an open-source license by this repository.
+No open-source license has been selected. Until one is added, no license is granted to reuse, modify, or distribute this code.
